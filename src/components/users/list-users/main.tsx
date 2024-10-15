@@ -1,60 +1,109 @@
 "use client";
 
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { QueryKey, useInfiniteQuery } from "@tanstack/react-query";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid2";
 import Stack from "@mui/material/Stack";
-import { getRandomUsers } from "@/services";
+import Typography from "@mui/material/Typography";
 import UserCard from "./ui/UserCard";
+import { User, UsersPage } from "@/types";
+import { getAllSavedUsers } from "@/services";
+import React from "react";
 
-export function ListUsers() {
-  const { data, error, fetchNextPage, isFetching, isFetchingNextPage, status } =
-    useInfiniteQuery({
-      queryKey: ["random-users"],
-      queryFn: ({ pageParam }) => getRandomUsers(pageParam),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) => lastPage.nextPage,
-    });
+interface Props {
+  queryKey: QueryKey;
+  getUsers: (page: number) => Promise<UsersPage>;
+  noUsersMessage: string | React.ReactNode;
+  showSaveButton?: boolean;
+}
+
+export function ListUsers({
+  queryKey,
+  getUsers,
+  noUsersMessage,
+  showSaveButton = false,
+}: Props) {
+  const [savedUsers, setSavedUsers] = React.useState<User[]>([]);
+  const [isSavedUsersLoading, setIsSavedUsersLoading] = React.useState(true);
+
+  // workaround for not being able to access local storage in SSR
+  React.useEffect(() => {
+    const localStorageSavedUsers = getAllSavedUsers();
+    setSavedUsers(localStorageSavedUsers);
+    setIsSavedUsersLoading(false);
+  }, []);
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey,
+    queryFn: ({ pageParam }) => getUsers(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+  });
 
   if (status === "error" || error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
   if (status === "pending") {
-    <CircularProgress size="large" />;
+    return (
+      <Stack alignItems="center">
+        <CircularProgress size="5rem" />
+      </Stack>
+    );
   }
 
-  if (!data?.pages?.[0]?.users) {
-    return (
-      <Alert severity="error">No users fetched. Please try again later.</Alert>
+  if (!data || data.pages[0].users.length == 0) {
+    return typeof noUsersMessage === "string" ? (
+      <Typography variant="h5">{noUsersMessage}</Typography>
+    ) : (
+      noUsersMessage
     );
   }
 
   return (
-    <main>
-      <Grid container spacing={{ xs: 2, md: 4 }} columns={12}>
-        {data.pages.map(({ users }) =>
-          users.map((user) => (
-            <Grid key={user.email} size={{ xs: 12, md: 6, lg: 4 }}>
-              <UserCard user={user} showSaveButton />
-            </Grid>
-          ))
-        )}
-        <Stack alignItems="center" width="100%">
-          <Button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            variant="contained"
-          >
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
-          </Button>
-          {isFetching && !isFetchingNextPage ? (
-            <CircularProgress size="large" />
-          ) : null}
-        </Stack>
-      </Grid>
-    </main>
+    <Grid container spacing={{ xs: 2, md: 4 }} columns={12}>
+      {data.pages.map(({ users }) =>
+        users.map((user) => (
+          <Grid key={user.email} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <UserCard
+              user={user}
+              showSaveButton={
+                showSaveButton &&
+                !savedUsers.some((savedUser) => savedUser.email === user.email)
+              }
+              disabled={isSavedUsersLoading}
+            />
+          </Grid>
+        ))
+      )}
+      <Stack alignItems="center" width="100%">
+        <Button
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+          variant="contained"
+        >
+          {isFetchingNextPage
+            ? "Loading more..."
+            : hasNextPage
+            ? "Load More"
+            : "Nothing more to load"}
+        </Button>
+        {isFetching && !isFetchingNextPage ? (
+          <Stack alignItems="center">
+            <CircularProgress size="5rem" />
+          </Stack>
+        ) : null}
+      </Stack>
+    </Grid>
   );
 }

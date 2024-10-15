@@ -9,7 +9,7 @@ import { MobileMenu } from "./ui";
 
 const pages = [
   { label: "Home", href: "/" },
-  { label: "Saved users", href: "/users" },
+  { label: "Saved users", href: "/users/saved" },
 ];
 
 export function AppHeader() {

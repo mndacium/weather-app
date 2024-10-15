@@ -6,7 +6,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { ListUsers } from "@/components/users";
-import { User } from "@/types";
+import { UsersPage } from "@/types";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -15,17 +15,23 @@ export const metadata: Metadata = {
 export default async function Home() {
   const queryClient = new QueryClient();
 
+  const queryKey = ["random-users"];
+
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["random-users"],
+    queryKey,
     queryFn: ({ pageParam }) => getRandomUsers(pageParam),
     initialPageParam: 0,
-    getNextPageParam: (lastPage: { users: User[]; nextPage: number }) =>
-      lastPage.nextPage,
+    getNextPageParam: (lastPage: UsersPage) => lastPage.nextPage,
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ListUsers />
+      <ListUsers
+        queryKey={queryKey}
+        getUsers={getRandomUsers}
+        noUsersMessage="No random users found. Please try again later."
+        showSaveButton
+      />
     </HydrationBoundary>
   );
 }

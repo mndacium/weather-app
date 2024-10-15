@@ -1,11 +1,10 @@
+"use server";
 import { PAGE_SIZE } from "@/constants";
-import { User } from "@/types";
+import { UsersPage } from "@/types";
 
-export const getRandomUsers = async (
-  page = 0
-): Promise<{ users: User[]; nextPage: number }> => {
+export const getRandomUsers = async (page = 0): Promise<UsersPage> => {
   const response = await fetch(
-    `https://randomuser.me/api/?page=${page}&results=${PAGE_SIZE}&inc=gender,name,location,email,picture`,
+    `https://randomuser.me/api/?page=${page}&results=${PAGE_SIZE}&inc=gender,name,location,email,picture&seed=weather-app`,
     { cache: "no-store" }
   );
 

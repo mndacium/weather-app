@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -7,13 +8,29 @@ import CardMedia from "@mui/material/CardMedia";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { User } from "@/types";
+import { useSaveUserMutation } from "@/hooks/users";
 
 interface Props {
   user: User;
+  disabled: boolean;
   showSaveButton?: boolean;
 }
 
-export default function UserCard({ user, showSaveButton = false }: Props) {
+export default function UserCard({
+  user,
+  disabled,
+  showSaveButton = false,
+}: Props) {
+  // workaround for not being able to access local storage in SSR
+  const [hideSaveButton, setHideSaveButton] = React.useState(false);
+
+  const { mutate } = useSaveUserMutation(user);
+
+  const handleMutation = React.useCallback(() => {
+    mutate();
+    setHideSaveButton(true);
+  }, []);
+
   return (
     <Card
       sx={{
@@ -23,7 +40,7 @@ export default function UserCard({ user, showSaveButton = false }: Props) {
         justifyContent: "space-between",
       }}
     >
-      <CardMedia component="img" height="500" image={user.picture.large} />
+      <CardMedia component="img" height="375" image={user.picture.large} />
       <CardContent>
         <Stack gap="0.5rem">
           <Stack>
@@ -52,12 +69,17 @@ export default function UserCard({ user, showSaveButton = false }: Props) {
         </Stack>
       </CardContent>
       <CardActions>
-        {showSaveButton && (
-          <Button size="small" color="primary">
+        {showSaveButton && !hideSaveButton && (
+          <Button
+            size="small"
+            color="primary"
+            onClick={handleMutation}
+            disabled={disabled}
+          >
             Save
           </Button>
         )}
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" disabled={disabled}>
           Weather
         </Button>
       </CardActions>
