@@ -13,9 +13,16 @@ interface Props {
   showSaveButton?: boolean;
 }
 
-export function UserCard({ user, showSaveButton = false }: Props) {
+export default function UserCard({ user, showSaveButton = false }: Props) {
   return (
-    <Card>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
       <CardMedia component="img" height="500" image={user.picture.large} />
       <CardContent>
         <Stack gap="0.5rem">
