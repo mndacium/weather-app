@@ -3,6 +3,9 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./globals.css";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import { AppHeader } from "@/components/layout";
 
 export default function RootLayout({
   children,
@@ -11,7 +14,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Stack minHeight="100vh">
+          <AppHeader />
+          <Stack flex="1">
+            <Container maxWidth="xl" sx={{ my: 4 }}>
+              {children}
+            </Container>
+          </Stack>
+        </Stack>
+      </body>
     </html>
   );
 }
