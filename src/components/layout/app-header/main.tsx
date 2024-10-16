@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { MobileMenu } from "./ui";
 
 const pages = [
-  { label: "Home", href: "/" },
+  { label: "Random users", href: "/" },
   { label: "Saved users", href: "/users/saved" },
 ];
 

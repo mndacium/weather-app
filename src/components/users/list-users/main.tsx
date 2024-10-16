@@ -15,6 +15,7 @@ import React from "react";
 interface Props {
   queryKey: QueryKey;
   getUsers: (page: number) => Promise<UsersPage>;
+  label: string;
   noUsersMessage: string | React.ReactNode;
   showSaveButton?: boolean;
 }
@@ -22,6 +23,7 @@ interface Props {
 export function ListUsers({
   queryKey,
   getUsers,
+  label,
   noUsersMessage,
   showSaveButton = false,
 }: Props) {
@@ -71,39 +73,44 @@ export function ListUsers({
   }
 
   return (
-    <Grid container spacing={{ xs: 2, md: 4 }} columns={12}>
-      {data.pages.map(({ users }) =>
-        users.map((user) => (
-          <Grid key={user.email} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <UserCard
-              user={user}
-              showSaveButton={
-                showSaveButton &&
-                !savedUsers.some((savedUser) => savedUser.email === user.email)
-              }
-              disabled={isSavedUsersLoading}
-            />
-          </Grid>
-        ))
-      )}
-      <Stack alignItems="center" width="100%">
-        <Button
-          onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetchingNextPage}
-          variant="contained"
-        >
-          {isFetchingNextPage
-            ? "Loading more..."
-            : hasNextPage
-            ? "Load More"
-            : "Nothing more to load"}
-        </Button>
-        {isFetching && !isFetchingNextPage ? (
-          <Stack alignItems="center">
-            <CircularProgress size="5rem" />
-          </Stack>
-        ) : null}
-      </Stack>
-    </Grid>
+    <Stack alignItems="center" gap="3rem">
+      <Typography variant="h4">{label}</Typography>
+      <Grid container spacing={{ xs: 2, md: 4 }} columns={12}>
+        {data.pages.map(({ users }) =>
+          users.map((user) => (
+            <Grid key={user.email} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <UserCard
+                user={user}
+                showSaveButton={
+                  showSaveButton &&
+                  !savedUsers.some(
+                    (savedUser) => savedUser.email === user.email
+                  )
+                }
+                disabled={isSavedUsersLoading}
+              />
+            </Grid>
+          ))
+        )}
+        <Stack alignItems="center" width="100%">
+          <Button
+            onClick={() => fetchNextPage()}
+            disabled={!hasNextPage || isFetchingNextPage}
+            variant="contained"
+          >
+            {isFetchingNextPage
+              ? "Loading more..."
+              : hasNextPage
+              ? "Load More"
+              : "Nothing more to load"}
+          </Button>
+          {isFetching && !isFetchingNextPage ? (
+            <Stack alignItems="center">
+              <CircularProgress size="5rem" />
+            </Stack>
+          ) : null}
+        </Stack>
+      </Grid>
+    </Stack>
   );
 }

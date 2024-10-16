@@ -9,7 +9,7 @@ import { ListUsers } from "@/components/users";
 import { UsersPage } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Random users",
 };
 
 export default async function Home() {
@@ -29,6 +29,7 @@ export default async function Home() {
       <ListUsers
         queryKey={queryKey}
         getUsers={getRandomUsers}
+        label="Random Users"
         noUsersMessage="No random users found. Please try again later."
         showSaveButton
       />

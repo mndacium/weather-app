@@ -12,6 +12,7 @@ export default function SavedUsers() {
     <ListUsers
       queryKey={queryKey}
       getUsers={getPaginatedSavedUsers}
+      label="Saved Users"
       noUsersMessage={
         <Typography variant="h5">
           No saved users found. <Link href="/">Try to add some</Link>

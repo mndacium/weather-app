@@ -6,6 +6,7 @@ import Link from "@mui/material/Link";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 
 interface Props {
   pages: { label: string; href: string }[];
@@ -53,8 +54,14 @@ export function MobileMenu({ pages }: Props) {
         sx={{ display: { xs: "block", md: "none" } }}
       >
         {pages.map(({ label, href }) => (
-          <MenuItem key={label} onClick={handleCloseNavMenu}>
-            <Link href={href}>{label}</Link>
+          <MenuItem
+            key={label}
+            onClick={handleCloseNavMenu}
+            style={{ padding: "1.25rem 2rem" }}
+          >
+            <Link href={href}>
+              <Typography fontWeight="500">{label}</Typography>
+            </Link>
           </MenuItem>
         ))}
       </Menu>
