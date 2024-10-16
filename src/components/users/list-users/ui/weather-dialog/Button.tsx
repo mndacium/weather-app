@@ -1,7 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import { User } from "@/types";
-import WeatherDialog from "./Dialog";
+import { WeatherDialog } from "./ui";
 
 export interface Props {
   user: User;

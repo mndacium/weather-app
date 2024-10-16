@@ -10,8 +10,6 @@ export const getWeather = async (params: {
 
     const response = responses[0];
 
-    console.log(responses);
-
     const range = (start: number, stop: number, step: number) =>
       Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
 
