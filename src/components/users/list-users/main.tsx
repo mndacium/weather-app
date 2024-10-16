@@ -75,7 +75,7 @@ export function ListUsers({
   return (
     <Stack alignItems="center" gap="3rem">
       <Typography variant="h4">{label}</Typography>
-      <Grid container spacing={{ xs: 2, md: 4 }} columns={12}>
+      <Grid container spacing={{ xs: 2, md: 4 }} columns={12} width="100%">
         {data.pages.map(({ users }) =>
           users.map((user) => (
             <Grid key={user.email} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
