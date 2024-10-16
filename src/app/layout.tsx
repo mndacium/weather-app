@@ -6,7 +6,11 @@ import "./globals.css";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import { AppHeader } from "@/components/layout";
-import { GoogleMapsAPIProvider, ReactQueryProvider } from "@/providers";
+import {
+  GoogleMapsAPIProvider,
+  ReactQueryProvider,
+  ToastProvider,
+} from "@/providers";
 
 export default function RootLayout({
   children,
@@ -18,14 +22,16 @@ export default function RootLayout({
       <body>
         <ReactQueryProvider>
           <GoogleMapsAPIProvider>
-            <Stack minHeight="100vh">
-              <AppHeader />
-              <Stack flex="1">
-                <Container maxWidth="xl" sx={{ my: 4 }}>
-                  {children}
-                </Container>
+            <ToastProvider>
+              <Stack minHeight="100vh">
+                <AppHeader />
+                <Stack flex="1">
+                  <Container maxWidth="xl" sx={{ my: 4 }}>
+                    {children}
+                  </Container>
+                </Stack>
               </Stack>
-            </Stack>
+            </ToastProvider>
           </GoogleMapsAPIProvider>
         </ReactQueryProvider>
       </body>

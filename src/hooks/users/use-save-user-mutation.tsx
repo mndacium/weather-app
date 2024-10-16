@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveUser } from "@/services";
 import { User } from "@/types";
+import { toast } from "react-toastify";
 
 export const useSaveUserMutation = (user: User) => {
   const queryClient = useQueryClient();
@@ -9,6 +10,9 @@ export const useSaveUserMutation = (user: User) => {
 
   return useMutation({
     mutationFn: async () => saveUser(user),
+    onSuccess: () => {
+      toast.success("User have been saved.");
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: randomUsersQueryKey });
       queryClient.invalidateQueries({ queryKey: savedUsersQueryKey });
