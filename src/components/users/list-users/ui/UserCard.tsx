@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { User } from "@/types";
 import { useSaveUserMutation } from "@/hooks/users";
+import WeatherDialogButton from "./weather-dialog/Button";
 
 interface Props {
   user: User;
@@ -79,9 +80,7 @@ export default function UserCard({
             Save
           </Button>
         )}
-        <Button size="small" color="primary" disabled={disabled}>
-          Weather
-        </Button>
+        <WeatherDialogButton user={user} disabled={disabled} />
       </CardActions>
     </Card>
   );

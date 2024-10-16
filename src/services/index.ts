@@ -4,3 +4,4 @@ export {
   getPaginatedSavedUsers,
   saveUser,
 } from "./saved-users";
+export { getWeather } from "./weather";
