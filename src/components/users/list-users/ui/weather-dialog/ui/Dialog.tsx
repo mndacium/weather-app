@@ -13,7 +13,12 @@ import { User } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { getWeather } from "@/services";
 import { mapOffsetToTimezone } from "@/utils";
-import { HourlyBarChart, CurrentWeatherInfo, BaseBlock } from "./ui";
+import {
+  HourlyBarChart,
+  CurrentWeatherInfo,
+  BaseBlock,
+  UserLocationMap,
+} from "./ui";
 
 export interface Props {
   user: User;
@@ -72,6 +77,9 @@ export function WeatherDialog({ user, open, handleClose }: Props) {
             </BaseBlock>
             <BaseBlock title="Hourly Forecast">
               <HourlyBarChart hourly={weather.hourly} />
+            </BaseBlock>
+            <BaseBlock title="User Location">
+              <UserLocationMap user={user} />
             </BaseBlock>
           </Stack>
         ) : (
