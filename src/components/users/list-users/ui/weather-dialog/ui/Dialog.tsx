@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,7 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { User } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getWeather } from "@/services";
 import { mapOffsetToTimezone } from "@/utils";
 import {
@@ -27,20 +28,48 @@ export interface Props {
 }
 
 export function WeatherDialog({ user, open, handleClose }: Props) {
+  const queryClient = useQueryClient();
+
+  const currentWeatherParams = {
+    latitude: user.location.coordinates.latitude,
+    longitude: user.location.coordinates.longitude,
+    current: ["temperature_2m", "weather_code"],
+    timezone: mapOffsetToTimezone(user.location.timezone.offset),
+  };
+
+  const allWeatherParams = {
+    ...currentWeatherParams,
+    hourly: ["temperature_2m", "weather_code"],
+    daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
+    forecast_hours: 5,
+    forecast_days: 1,
+  };
+
   const { data: weather, isLoading } = useQuery({
     queryKey: ["weather", user.email],
-    queryFn: () =>
-      getWeather({
-        latitude: user.location.coordinates.latitude,
-        longitude: user.location.coordinates.longitude,
-        current: ["temperature_2m", "weather_code"],
-        hourly: ["temperature_2m", "weather_code"],
-        daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
-        forecast_hours: 5,
-        forecast_days: 1,
-        timezone: mapOffsetToTimezone(user.location.timezone.offset),
-      }),
+    queryFn: () => getWeather(allWeatherParams),
+    staleTime: 5 * 60 * 1000,
   });
+
+  // Refetch current weather every 5 minutes
+  React.useEffect(() => {
+    if (!weather) return;
+
+    const interval = setInterval(async () => {
+      const newCurrentWeather = await getWeather(currentWeatherParams);
+      console.log(newCurrentWeather);
+      queryClient.setQueryData(["weather", user.email], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          current: newCurrentWeather.current,
+        };
+      });
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [queryClient, user.email]);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
