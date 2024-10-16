@@ -30,7 +30,7 @@ export default function UserCard({
   const handleMutation = React.useCallback(() => {
     mutate();
     setHideSaveButton(true);
-  }, []);
+  }, [mutate]);
 
   return (
     <Card

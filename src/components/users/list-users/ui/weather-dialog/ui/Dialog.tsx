@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { User } from "@/types";
+import { User, Weather } from "@/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getWeather } from "@/services";
 import { mapOffsetToTimezone } from "@/utils";
@@ -58,7 +58,7 @@ export function WeatherDialog({ user, open, handleClose }: Props) {
     const interval = setInterval(async () => {
       const newCurrentWeather = await getWeather(currentWeatherParams);
       console.log(newCurrentWeather);
-      queryClient.setQueryData(["weather", user.email], (oldData: any) => {
+      queryClient.setQueryData(["weather", user.email], (oldData: Weather) => {
         if (!oldData) return oldData;
 
         return {

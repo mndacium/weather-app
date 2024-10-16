@@ -2,7 +2,7 @@ import { fetchWeatherApi } from "openmeteo";
 import { Weather } from "@/types";
 
 export const getWeather = async (params: {
-  [key: string]: any;
+  [key: string]: number | number[] | string | string[];
 }): Promise<Weather> => {
   try {
     const url = "https://api.open-meteo.com/v1/forecast";
@@ -48,7 +48,7 @@ export const getWeather = async (params: {
 
     return weatherData as Weather;
   } catch (err) {
-    // @ts-expect-error
+    // @ts-expect-error err type unknown or any
     throw new Error(`Failed to fetch weather: ${err.message}`);
   }
 };

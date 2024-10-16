@@ -92,7 +92,13 @@ export function ListUsers({
             </Grid>
           ))
         )}
-        <Stack alignItems="center" width="100%">
+        <Stack alignItems="center" width="100%" gap="2rem">
+          {isFetching && !isFetchingNextPage ? (
+            <Stack alignItems="center">
+              <CircularProgress size="5rem" />
+            </Stack>
+          ) : null}
+
           <Button
             onClick={() => fetchNextPage()}
             disabled={!hasNextPage || isFetchingNextPage}
@@ -104,11 +110,6 @@ export function ListUsers({
               ? "Load More"
               : "Nothing more to load"}
           </Button>
-          {isFetching && !isFetchingNextPage ? (
-            <Stack alignItems="center">
-              <CircularProgress size="5rem" />
-            </Stack>
-          ) : null}
         </Stack>
       </Grid>
     </Stack>
