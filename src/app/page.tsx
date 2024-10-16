@@ -20,7 +20,7 @@ export default async function Home() {
   await queryClient.prefetchInfiniteQuery({
     queryKey,
     queryFn: ({ pageParam }) => getRandomUsers(pageParam),
-    initialPageParam: 0,
+    initialPageParam: 1,
     getNextPageParam: (lastPage: UsersPage) => lastPage.nextPage,
   });
 
